@@ -3,7 +3,7 @@ package com.rak.feecollection.model;
 import java.util.HashMap;
 import java.util.Map;
 
-public record FeeDetail(String schoolName, String grade) {
+public record FeeDto(String schoolName, String grade) {
 
     private static final Map<String, Map<String, Double>> feeDetailsBySchoolAndGrade = new HashMap<>();
 

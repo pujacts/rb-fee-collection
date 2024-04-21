@@ -3,8 +3,8 @@ package com.rak.feecollection.entity;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "school_detail")
-public class SchoolDetail {
+@Table(name = "school")
+public class School {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "school_id", nullable = false)

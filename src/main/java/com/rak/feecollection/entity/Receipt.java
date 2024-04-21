@@ -36,7 +36,7 @@ public class Receipt {
 
     @ManyToOne
     @JoinColumn(name = "school_id", nullable = false)
-    private SchoolDetail schoolDetail;
+    private School schoolDetail;
 
     public Long getReceiptId() {
         return receiptId;
@@ -102,11 +102,11 @@ public class Receipt {
         this.collectionDate = collectionDate;
     }
 
-    public SchoolDetail getSchoolDetail() {
+    public School getSchoolDetail() {
         return schoolDetail;
     }
 
-    public void setSchoolDetail(SchoolDetail schoolDetail) {
+    public void setSchoolDetail(School schoolDetail) {
         this.schoolDetail = schoolDetail;
     }
 }

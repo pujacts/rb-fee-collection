@@ -1,7 +1,7 @@
 package com.rak.feecollection.util;
 
 import com.rak.feecollection.entity.Receipt;
-import com.rak.feecollection.model.ReceiptData;
+import com.rak.feecollection.model.ReceiptDto;
 import org.springframework.util.Assert;
 
 import java.util.Collections;
@@ -10,33 +10,33 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class ReceiptUtility {
-    public static ReceiptData mapStudentToStudentResponse(Receipt receipt) {
+    public static ReceiptDto mapStudentToStudentResponse(Receipt receipt) {
         Assert.notNull(receipt, "Receipt is null");
-        ReceiptData receiptData = new ReceiptData();
-        receiptData.setStudentId(receipt.getStudentId());
-        receiptData.setStudentName(receipt.getStudentName());
-        receiptData.setCardNumber(receipt.getCardNumber());
-        receiptData.setCardType(receipt.getCardType().name());
-        receiptData.setReference(receipt.getTransactionReference());
-        receiptData.setTransactionDateAndTime(receipt.getCollectionDate());
-        receiptData.setTransactionAmount(receipt.getTransactionAmount());
-        return receiptData;
+        ReceiptDto receiptDto = new ReceiptDto();
+        receiptDto.setStudentId(receipt.getStudentId());
+        receiptDto.setStudentName(receipt.getStudentName());
+        receiptDto.setCardNumber(receipt.getCardNumber());
+        receiptDto.setCardType(receipt.getCardType().name());
+        receiptDto.setReference(receipt.getTransactionReference());
+        receiptDto.setTransactionDateAndTime(receipt.getCollectionDate());
+        receiptDto.setTransactionAmount(receipt.getTransactionAmount());
+        return receiptDto;
     }
 
-    public static List<ReceiptData> mapStudentToStudentResponse(List<Receipt> receipts) {
+    public static List<ReceiptDto> mapStudentToStudentResponse(List<Receipt> receipts) {
         return Optional.ofNullable(receipts)
                 .orElse(Collections.emptyList())
                 .stream()
                 .map(receipt -> {
-                    ReceiptData receiptData = new ReceiptData();
-                    receiptData.setStudentId(receipt.getStudentId());
-                    receiptData.setStudentName(receipt.getStudentName());
-                    receiptData.setCardNumber(receipt.getCardNumber());
-                    receiptData.setCardType(receipt.getCardType().name());
-                    receiptData.setReference(receipt.getTransactionReference());
-                    receiptData.setTransactionDateAndTime(receipt.getCollectionDate());
-                    receiptData.setTransactionAmount(receipt.getTransactionAmount());
-                    return receiptData;
+                    ReceiptDto receiptDto = new ReceiptDto();
+                    receiptDto.setStudentId(receipt.getStudentId());
+                    receiptDto.setStudentName(receipt.getStudentName());
+                    receiptDto.setCardNumber(receipt.getCardNumber());
+                    receiptDto.setCardType(receipt.getCardType().name());
+                    receiptDto.setReference(receipt.getTransactionReference());
+                    receiptDto.setTransactionDateAndTime(receipt.getCollectionDate());
+                    receiptDto.setTransactionAmount(receipt.getTransactionAmount());
+                    return receiptDto;
                 })
                 .collect(Collectors.toList());
     }

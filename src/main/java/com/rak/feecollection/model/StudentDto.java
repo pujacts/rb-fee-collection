@@ -1,12 +1,18 @@
 package com.rak.feecollection.model;
 
-import com.rak.feecollection.entity.SchoolDetail;
+import com.rak.feecollection.entity.School;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-public class StudentDetail {
+@Schema(description = "Student Dto")
+public class StudentDto {
+    @Schema(description = "Student Id")
     private long studentId;
+    @Schema(description = "Student Name")
     private String studentName;
+    @Schema(description = "Mobile Number")
     private String mobileNumber;
-    private SchoolDetail schoolDetail;
+    @Schema(description = "School Dto")
+    private SchoolDto schoolDto;
 
     public long getStudentId() {
         return studentId;
@@ -32,11 +38,11 @@ public class StudentDetail {
         this.mobileNumber = mobileNumber;
     }
 
-    public SchoolDetail getSchoolDetail() {
-        return schoolDetail;
+    public SchoolDto getSchoolDto() {
+        return schoolDto;
     }
 
-    public void setSchoolDetail(SchoolDetail schoolDetail) {
-        this.schoolDetail = schoolDetail;
+    public void setSchoolDto(SchoolDto schoolDto) {
+        this.schoolDto = schoolDto;
     }
 }

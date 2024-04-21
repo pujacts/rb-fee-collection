@@ -1,9 +1,9 @@
 package com.rak.feecollection.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.rak.feecollection.model.PaymentRequest;
-import com.rak.feecollection.model.ReceiptResponse;
-import com.rak.feecollection.model.StudentDetail;
+import com.rak.feecollection.model.PaymentRequestDto;
+import com.rak.feecollection.model.ReceiptResponseDto;
+import com.rak.feecollection.model.StudentDto;
 import com.rak.feecollection.service.ReceiptService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +25,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
  class ReceiptControllerIntegrationTest {
 
+   private static final String RECEIPT_RESOURCE = "/api/fees";
+   private static final String PROCESS_FEE = "/payment";
+   private static final String RETRIEVE_RECEIPT = "/{studentId}/receipt";
+   private static final String GET_ALL_RECEIPT = "/receipts";
+
     @Autowired
      MockMvc mockMvc;
 
@@ -36,21 +41,21 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
     @Test
      void testCreateTuitionFee() throws Exception {
-        PaymentRequest paymentRequest = new PaymentRequest();
+        PaymentRequestDto paymentRequestDto = new PaymentRequestDto();
 
-        StudentDetail studentDetails = new StudentDetail();
+        StudentDto studentDetails = new StudentDto();
         studentDetails.setStudentId(1l);
 
-        paymentRequest.setStudentDetails(studentDetails);
+        paymentRequestDto.setStudentDto(studentDetails);
 
-        ReceiptResponse receiptResponse = new ReceiptResponse();
+        ReceiptResponseDto receiptResponse = new ReceiptResponseDto();
         receiptResponse.setStatusMessage("SUCCESS");
 
-        when(receiptService.performFeePayment(any(PaymentRequest.class))).thenReturn(receiptResponse);
+        when(receiptService.performFeePayment(any(PaymentRequestDto.class))).thenReturn(receiptResponse);
 
-        ResultActions resultActions = mockMvc.perform(post("/api/receipts/payment")
+        ResultActions resultActions = mockMvc.perform(post(RECEIPT_RESOURCE + PROCESS_FEE)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(paymentRequest)));
+                .content(objectMapper.writeValueAsString(paymentRequestDto)));
 
         resultActions.andExpect(status().isOk())
                 .andExpect(jsonPath("$.statusMessage").value("SUCCESS"));
@@ -59,12 +64,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     @Test
      void testFetchReceiptDetail() throws Exception {
         Long studentId = 1L;
-        ReceiptResponse receiptResponse = new ReceiptResponse();
+        ReceiptResponseDto receiptResponse = new ReceiptResponseDto();
         receiptResponse.setStatusMessage("SUCCESS");
 
         when(receiptService.getReceiptDetail(anyLong())).thenReturn(receiptResponse);
 
-        ResultActions resultActions = mockMvc.perform(get("/api/receipts/detail/{studentId}", studentId));
+        ResultActions resultActions = mockMvc.perform(get(RECEIPT_RESOURCE + RETRIEVE_RECEIPT, studentId));
 
         resultActions.andExpect(status().isOk())
                 .andExpect(jsonPath("$.statusMessage").value("SUCCESS"));
@@ -74,12 +79,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
      void testGetAllReceipts() throws Exception {
         String schoolName = "ABC School";
         String grade = "10";
-        ReceiptResponse receiptResponse = new ReceiptResponse();
-        receiptResponse.setStatusMessage("SUCCESS");
+        ReceiptResponseDto receiptResponseDto = new ReceiptResponseDto();
+        receiptResponseDto.setStatusMessage("SUCCESS");
 
-        when(receiptService.getAllReceipts(eq(schoolName), eq(grade))).thenReturn(receiptResponse);
+        when(receiptService.getAllReceipts(eq(schoolName), eq(grade))).thenReturn(receiptResponseDto);
 
-        ResultActions resultActions = mockMvc.perform(get("/api/receipts/all/receipt")
+        ResultActions resultActions = mockMvc.perform(get(RECEIPT_RESOURCE + GET_ALL_RECEIPT)
                 .param("schoolName", schoolName)
                 .param("grade", grade));
 
