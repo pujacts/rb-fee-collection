@@ -1,10 +1,10 @@
 package com.rak.feecollection.repository;
 
-import com.rak.feecollection.entity.SchoolDetail;
+import com.rak.feecollection.entity.School;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface SchoolDetailRepository extends JpaRepository<SchoolDetail, Long> {
-    SchoolDetail findBySchoolNameAndGrade(final String schoolName, final String grade);
+public interface SchoolDetailRepository extends JpaRepository<School, Long> {
+    School findBySchoolNameAndGrade(final String schoolName, final String grade);
 
-    SchoolDetail findBySchoolName(String schoolName);
+    School findBySchoolName(String schoolName);
 }

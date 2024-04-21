@@ -1,10 +1,16 @@
 package com.rak.feecollection.model;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 import java.math.BigDecimal;
 
-public class CardDetails {
+@Schema(description = "Card Dto")
+public class CardDto {
+    @Schema(description = "Card number")
     private String cardNumber;
+    @Schema(description = "Card type")
     private String cardType;
+    @Schema(description = "Transaction Amoun")
     private BigDecimal transactionAmount;
 
     public String getCardNumber() {

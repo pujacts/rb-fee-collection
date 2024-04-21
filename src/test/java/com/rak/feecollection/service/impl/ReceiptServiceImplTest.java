@@ -1,7 +1,7 @@
 package com.rak.feecollection.service.impl;
 
 import com.rak.feecollection.entity.Receipt;
-import com.rak.feecollection.entity.SchoolDetail;
+import com.rak.feecollection.entity.School;
 import com.rak.feecollection.model.*;
 import com.rak.feecollection.repository.ReceiptRepository;
 import com.rak.feecollection.repository.SchoolDetailRepository;
@@ -37,29 +37,29 @@ class ReceiptServiceImplTest {
 
     @Test
     void testCreateTuitionFee() {
-        PaymentRequest paymentRequest = new PaymentRequest();
-        paymentRequest.setStudentDetails(new StudentDetail());
-        paymentRequest.getStudentDetails().setSchoolDetail(new SchoolDetail());
-        paymentRequest.getStudentDetails().getSchoolDetail().setSchoolName("School");
-        paymentRequest.getStudentDetails().getSchoolDetail().setGrade("Grade");
+        PaymentRequestDto paymentRequestDto = new PaymentRequestDto();
+        paymentRequestDto.setStudentDto(new StudentDto());
+        paymentRequestDto.getStudentDto().setSchoolDto(new SchoolDto());
+        paymentRequestDto.getStudentDto().getSchoolDto().setSchoolName("School");
+        paymentRequestDto.getStudentDto().getSchoolDto().setGrade("Grade");
 
-        paymentRequest.setCardDetails(new CardDetails());
-        paymentRequest.getCardDetails().setCardNumber("1234567890");
-        paymentRequest.getCardDetails().setCardType("Visa");
-        paymentRequest.getCardDetails().setTransactionAmount(BigDecimal.valueOf(10000l));
+        paymentRequestDto.setCardDto(new CardDto());
+        paymentRequestDto.getCardDto().setCardNumber("1234567890");
+        paymentRequestDto.getCardDto().setCardType("Visa");
+        paymentRequestDto.getCardDto().setTransactionAmount(BigDecimal.valueOf(10000l));
 
-        SchoolDetail schoolDetail = new SchoolDetail();
+        School schoolDetail = new School();
         schoolDetail.setSchoolName("School");
         schoolDetail.setGrade("Grade");
 
-        PaymentTransactionDetail paymentTransactionDetail = new PaymentTransactionDetail();
-        paymentTransactionDetail.setTotalFee(100.0);
-        paymentTransactionDetail.setTransactionReference(12345l);
+        PaymentTransactionDto paymentTransactionDto = new PaymentTransactionDto();
+        paymentTransactionDto.setTotalFee(100.0);
+        paymentTransactionDto.setTransactionReference(12345l);
 
         when(schoolDetailRepository.findBySchoolName("School")).thenReturn(schoolDetail);
         when(receiptRepository.saveAll(any())).thenReturn(new ArrayList<>());
 
-        ReceiptResponse receiptResponse = receiptService.performFeePayment(paymentRequest);
+        ReceiptResponseDto receiptResponse = receiptService.performFeePayment(paymentRequestDto);
 
         assertEquals("SUCCESS", receiptResponse.getStatusMessage());
     }
@@ -78,7 +78,7 @@ class ReceiptServiceImplTest {
 
         when(receiptRepository.findByStudentId(studentId)).thenReturn(receipts);
 
-        ReceiptResponse receiptResponse = receiptService.getReceiptDetail(studentId);
+        ReceiptResponseDto receiptResponse = receiptService.getReceiptDetail(studentId);
 
         assertEquals("SUCCESS", receiptResponse.getStatusMessage());
     }
@@ -98,7 +98,7 @@ class ReceiptServiceImplTest {
 
         when(receiptRepository.findAllBySchoolDetail_SchoolNameAndSchoolDetail_Grade(schoolName, grade)).thenReturn(receipts);
 
-        ReceiptResponse receiptResponse = receiptService.getAllReceipts(schoolName, grade);
+        ReceiptResponseDto receiptResponse = receiptService.getAllReceipts(schoolName, grade);
 
         assertEquals("SUCCESS", receiptResponse.getStatusMessage());
     }

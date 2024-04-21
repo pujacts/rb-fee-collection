@@ -8,4 +8,9 @@ public interface ReceiptConstants {
     String SUCCESS = "SUCCESS";
     String NOT_FOUND_MSG = "Not Found";
     String CURRENCY_AED = "AED";
+
+    String RECEIPT_RESOURCE = "/api/fees";
+    String PROCESS_FEE = "/payment";
+    String RETRIEVE_RECEIPT = "/{studentId}/receipt";
+    String GET_ALL_RECEIPT = "/receipts";
 }

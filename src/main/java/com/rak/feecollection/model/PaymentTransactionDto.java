@@ -1,7 +1,12 @@
 package com.rak.feecollection.model;
 
-public class PaymentTransactionDetail {
+import io.swagger.v3.oas.annotations.media.Schema;
+
+@Schema(description = "Payment Transaction Dto")
+public class PaymentTransactionDto {
+    @Schema(description = "Total fees")
     private double totalFee;
+    @Schema(description = "Trsancation Reference")
     private long transactionReference;
 
     public double getTotalFee() {

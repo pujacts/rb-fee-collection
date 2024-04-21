@@ -1,7 +1,7 @@
 package com.rak.feecollection.service.impl;
 
 import com.rak.feecollection.entity.Receipt;
-import com.rak.feecollection.entity.SchoolDetail;
+import com.rak.feecollection.entity.School;
 import com.rak.feecollection.model.*;
 import com.rak.feecollection.repository.ReceiptRepository;
 import com.rak.feecollection.repository.SchoolDetailRepository;
@@ -16,6 +16,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.rak.feecollection.constant.ReceiptConstants.*;
+import static com.rak.feecollection.mapper.SchoolMapper.toDto;
+import static com.rak.feecollection.mapper.SchoolMapper.toEntity;
 import static com.rak.feecollection.util.ReceiptUtility.calculateCustomFee;
 import static com.rak.feecollection.util.ReceiptUtility.mapStudentToStudentResponse;
 
@@ -33,34 +35,34 @@ public class ReceiptServiceImpl implements ReceiptService {
     }
 
     @Override
-    public ReceiptResponse performFeePayment(final PaymentRequest paymentRequest) {
-        logger.info("Perform Fee Payment of Student ID :: [{}] ", paymentRequest.getStudentDetails().getStudentId());
-        ReceiptResponse receiptResponse = new ReceiptResponse();
+    public ReceiptResponseDto performFeePayment(final PaymentRequestDto paymentRequestDto) {
+        logger.info("Perform Fee Payment of Student ID :: [{}] ", paymentRequestDto.getStudentDto().getStudentId());
+        ReceiptResponseDto receiptResponse = new ReceiptResponseDto();
         try {
             List<Receipt> receiptList = new ArrayList<>();
-            PurchaseDetailsResponse purchaseDetailsResponse = new PurchaseDetailsResponse();
-            StudentDetail studentDetail = paymentRequest.getStudentDetails();
-            SchoolDetail schoolDetail = studentDetail.getSchoolDetail();
-            String schoolName = schoolDetail.getSchoolName();
-            String grade = schoolDetail.getGrade();
-            PaymentTransactionDetail paymentTransactionDetail = CalculateFee.feeCalculation(
+            PurchaseDetailsResponseDto purchaseDetailsResponseDto = new PurchaseDetailsResponseDto();
+            StudentDto studentDto = paymentRequestDto.getStudentDto();
+            SchoolDto schoolDto = studentDto.getSchoolDto();
+            String schoolName = schoolDto.getSchoolName();
+            String grade = schoolDto.getGrade();
+            PaymentTransactionDto paymentTransactionDto = CalculateFee.feeCalculation(
                     schoolName,
                     grade
             );
-            if (paymentTransactionDetail.getTotalFee() > paymentRequest.getCardDetails().getTransactionAmount().intValue()) {
+            if (paymentTransactionDto.getTotalFee() > paymentRequestDto.getCardDto().getTransactionAmount().intValue()) {
                 throw new IllegalStateException("Transaction Amount is lesser than required Fee");
             }
-            schoolDetail = validateSchoolDetail(schoolName, grade);
-            createReceiptEntity(paymentRequest, studentDetail, schoolDetail, paymentTransactionDetail, receiptList);
+            schoolDto = validateSchoolDetail(schoolName, grade);
+            createReceiptEntity(paymentRequestDto, studentDto, schoolDto, paymentTransactionDto, receiptList);
 
             List<Receipt> receipts = receiptRepository.saveAll(receiptList);
-            List<ReceiptData> receiptDataList = mapStudentToStudentResponse(receipts);
+            List<ReceiptDto> receiptDtoList = mapStudentToStudentResponse(receipts);
 
-            receiptResponse.setReceiptDataList(receiptDataList);
-            purchaseDetailsResponse.setGrade(grade);
-            purchaseDetailsResponse.setTuitionFee(paymentTransactionDetail.getTotalFee());
-            purchaseDetailsResponse.setCustomAmount(CURRENCY_AED + " " + calculateCustomFee(1, paymentTransactionDetail.getTotalFee()));
-            receiptResponse.setPurchaseDetailsResponse(purchaseDetailsResponse);
+            receiptResponse.setReceiptDataList(receiptDtoList);
+            purchaseDetailsResponseDto.setGrade(grade);
+            purchaseDetailsResponseDto.setTuitionFee(paymentTransactionDto.getTotalFee());
+            purchaseDetailsResponseDto.setCustomAmount(CURRENCY_AED + " " + calculateCustomFee(1, paymentTransactionDto.getTotalFee()));
+            receiptResponse.setPurchaseDetailsResponse(purchaseDetailsResponseDto);
             receiptResponse.setStatusCode(SUCCESS_CODE);
             receiptResponse.setStatusMessage(SUCCESS);
         } catch (Exception ex) {
@@ -72,37 +74,37 @@ public class ReceiptServiceImpl implements ReceiptService {
         return receiptResponse;
     }
 
-    private SchoolDetail validateSchoolDetail(String schoolName, String grade) {
-        SchoolDetail schoolDetail;
+    private SchoolDto validateSchoolDetail(String schoolName, String grade) {
+
         logger.info("Validate school detail :: [{}] ", schoolName, grade);
-        schoolDetail = schoolDetailRepository.findBySchoolName(schoolName);
-        if (schoolDetail == null) {
-            schoolDetail = new SchoolDetail();
-            schoolDetail.setSchoolName(schoolName);
-            schoolDetail.setGrade(grade);
-            schoolDetailRepository.save(schoolDetail);
+        School school = schoolDetailRepository.findBySchoolName(schoolName);
+        if (school == null) {
+            school = new School();
+            school.setSchoolName(schoolName);
+            school.setGrade(grade);
+            schoolDetailRepository.save(school);
         }
-        return schoolDetail;
+        return toDto(school);
     }
 
-    private static void createReceiptEntity(PaymentRequest paymentRequest, StudentDetail studentDetail, SchoolDetail schoolDetail, PaymentTransactionDetail paymentTransactionDetail, List<Receipt> receiptList) {
+    private static void createReceiptEntity(PaymentRequestDto paymentRequestDto, StudentDto studentDto, SchoolDto schoolDto, PaymentTransactionDto paymentTransactionDto, List<Receipt> receiptList) {
         logger.info("Create receipt entity");
         Receipt receipt = new Receipt();
-        receipt.setStudentName(studentDetail.getStudentName());
-        receipt.setStudentId(studentDetail.getStudentId());
-        receipt.setTransactionReference(paymentTransactionDetail.getTransactionReference());
-        receipt.setCardNumber(paymentRequest.getCardDetails().getCardNumber());
-        receipt.setCardType(paymentRequest.getCardDetails().getCardType());
-        receipt.setTransactionAmount(paymentTransactionDetail.getTotalFee());
+        receipt.setStudentName(studentDto.getStudentName());
+        receipt.setStudentId(studentDto.getStudentId());
+        receipt.setTransactionReference(paymentTransactionDto.getTransactionReference());
+        receipt.setCardNumber(paymentRequestDto.getCardDto().getCardNumber());
+        receipt.setCardType(paymentRequestDto.getCardDto().getCardType());
+        receipt.setTransactionAmount(paymentTransactionDto.getTotalFee());
         receipt.setCollectionDate(OffsetDateTime.now());
-        receipt.setSchoolDetail(schoolDetail);
+        receipt.setSchoolDetail(toEntity(schoolDto));
         receiptList.add(receipt);
     }
 
     @Override
-    public ReceiptResponse getReceiptDetail(final Long studentId) {
+    public ReceiptResponseDto getReceiptDetail(final Long studentId) {
         logger.info("Get receipt detail of Student ID :: [{}] ", studentId);
-        ReceiptResponse receiptResponse = new ReceiptResponse();
+        ReceiptResponseDto receiptResponse = new ReceiptResponseDto();
         try {
             List<Receipt> receipts = receiptRepository.findByStudentId(studentId);
             if (receipts.isEmpty()) {
@@ -110,11 +112,11 @@ public class ReceiptServiceImpl implements ReceiptService {
                 receiptResponse.setStatusCode(NOT_FOUND);
                 return receiptResponse;
             }
-            List<ReceiptData> receiptData = mapStudentToStudentResponse(receipts);
-            PurchaseDetailsResponse purchaseDetailsResponse = new PurchaseDetailsResponse();
-            double customTotal = receiptData.stream().map(ReceiptData::getTransactionAmount).reduce(0.0, (a, b) -> a + b);
-            purchaseDetailsResponse.setCustomAmount(String.valueOf(customTotal));
-            receiptResponse.setPurchaseDetailsResponse(purchaseDetailsResponse);
+            List<ReceiptDto> receiptData = mapStudentToStudentResponse(receipts);
+            PurchaseDetailsResponseDto purchaseDetailsResponseDto = new PurchaseDetailsResponseDto();
+            double customTotal = receiptData.stream().map(ReceiptDto::getTransactionAmount).reduce(0.0, (a, b) -> a + b);
+            purchaseDetailsResponseDto.setCustomAmount(String.valueOf(customTotal));
+            receiptResponse.setPurchaseDetailsResponse(purchaseDetailsResponseDto);
             receiptResponse.setReceiptDataList(receiptData);
             receiptResponse.setStatusMessage(SUCCESS);
             receiptResponse.setStatusCode(SUCCESS_CODE);
@@ -128,18 +130,18 @@ public class ReceiptServiceImpl implements ReceiptService {
     }
 
     @Override
-    public ReceiptResponse getAllReceipts(final String schoolName, final String grade) {
+    public ReceiptResponseDto getAllReceipts(final String schoolName, final String grade) {
         logger.info("Get ALl receipt detail of School :: [{}] and Grade :: [{}] ", schoolName, grade);
 
-        ReceiptResponse receiptResponse = new ReceiptResponse();
+        ReceiptResponseDto receiptResponse = new ReceiptResponseDto();
         try {
             List<Receipt> receipts = receiptRepository
                     .findAllBySchoolDetail_SchoolNameAndSchoolDetail_Grade(schoolName, grade);
-            List<ReceiptData> receiptData = mapStudentToStudentResponse(receipts);
-            PurchaseDetailsResponse purchaseDetailsResponse = new PurchaseDetailsResponse();
-            double customTotal = receiptData.stream().map(ReceiptData::getTransactionAmount).reduce(0.0, (a, b) -> a + b);
-            purchaseDetailsResponse.setCustomAmount(String.valueOf(customTotal));
-            receiptResponse.setPurchaseDetailsResponse(purchaseDetailsResponse);
+            List<ReceiptDto> receiptData = mapStudentToStudentResponse(receipts);
+            PurchaseDetailsResponseDto purchaseDetailsResponseDto = new PurchaseDetailsResponseDto();
+            double customTotal = receiptData.stream().map(ReceiptDto::getTransactionAmount).reduce(0.0, (a, b) -> a + b);
+            purchaseDetailsResponseDto.setCustomAmount(String.valueOf(customTotal));
+            receiptResponse.setPurchaseDetailsResponse(purchaseDetailsResponseDto);
             receiptResponse.setReceiptDataList(receiptData);
             receiptResponse.setStatusMessage(SUCCESS);
             receiptResponse.setStatusCode(SUCCESS_CODE);

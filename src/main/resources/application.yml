@@ -3,6 +3,7 @@ server:
   servlet:
     context-path: /fee-collection
 
+
 spring:
   application:
     name: fee-collection
@@ -25,3 +26,17 @@ spring:
       path=/swagger-ui.html
     api-docs:
       path=/api-docs
+
+  # Actuator
+management:
+  server:
+    port: 8085
+  endpoints:
+    web:
+      base-path: /actuator
+      exposure:
+        include: health
+    health:
+      enabled: true
+
+

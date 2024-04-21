@@ -1,17 +1,17 @@
 package com.rak.feecollection.util;
 
-import com.rak.feecollection.model.FeeDetail;
-import com.rak.feecollection.model.PaymentTransactionDetail;
+import com.rak.feecollection.model.FeeDto;
+import com.rak.feecollection.model.PaymentTransactionDto;
 public class CalculateFee {
 
     private static long lastTimestamp = 0;
     private static long counter = 0;
 
-    public static PaymentTransactionDetail feeCalculation(final String schoolName, final String grade) {
-        PaymentTransactionDetail paymentTransactionDetail = new PaymentTransactionDetail();
-        paymentTransactionDetail.setTransactionReference(transactionReference());
-        paymentTransactionDetail.setTotalFee(FeeDetail.getFee(schoolName, grade));
-        return paymentTransactionDetail;
+    public static PaymentTransactionDto feeCalculation(final String schoolName, final String grade) {
+        PaymentTransactionDto paymentTransactionDto = new PaymentTransactionDto();
+        paymentTransactionDto.setTransactionReference(transactionReference());
+        paymentTransactionDto.setTotalFee(FeeDto.getFee(schoolName, grade));
+        return paymentTransactionDto;
     }
 
     public static long transactionReference() {
