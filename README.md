@@ -2,8 +2,10 @@
 
 ## SWAGGER
 
-- **Swagger UI:** [http://localhost:8081/fee-collection/swagger-ui/index.html](http://localhost:8081/fee-collection/swagger-ui/index.html)
-- **Swagger YAML:** [http://localhost:8081/fee-collection/v3/api-docs.yaml](http://localhost:8081/fee-collection/v3/api-docs.yaml)
+- **Swagger
+  UI:** [http://localhost:8081/fee-collection/swagger-ui/index.html](http://localhost:8081/fee-collection/swagger-ui/index.html)
+- **Swagger
+  YAML:** [http://localhost:8081/fee-collection/v3/api-docs.yaml](http://localhost:8081/fee-collection/v3/api-docs.yaml)
 - **Swagger JSON:** [http://localhost:8081/fee-collection/v3/api-docs](http://localhost:8081/fee-collection/v3/api-docs)
 
 ## Actuator

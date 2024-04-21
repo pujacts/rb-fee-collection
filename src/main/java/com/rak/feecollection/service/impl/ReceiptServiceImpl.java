@@ -2,7 +2,6 @@ package com.rak.feecollection.service.impl;
 
 import com.rak.feecollection.entity.Receipt;
 import com.rak.feecollection.entity.School;
-import com.rak.feecollection.mapper.SchoolMapper;
 import com.rak.feecollection.model.*;
 import com.rak.feecollection.repository.ReceiptRepository;
 import com.rak.feecollection.repository.SchoolDetailRepository;

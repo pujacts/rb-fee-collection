@@ -89,6 +89,7 @@ public class Receipt {
     public CardType getCardType() {
         return CardType.getById(cardTypeId);
     }
+
     public void setCardType(String cardType) {
         this.cardType = CardType.valueOf(cardType.toUpperCase());
         this.cardTypeId = this.cardType.getId();

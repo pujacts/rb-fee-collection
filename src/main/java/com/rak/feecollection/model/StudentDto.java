@@ -1,6 +1,5 @@
 package com.rak.feecollection.model;
 
-import com.rak.feecollection.entity.School;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(description = "Student Dto")
